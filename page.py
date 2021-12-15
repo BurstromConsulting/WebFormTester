@@ -1,6 +1,10 @@
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
 from element import BasePageElement
-from locators import MainPageLocators, SearchResultsPageLocators
+from locators import MainPageLocators, SearchResultsPageLocators, IssuesPageLocators
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+import time
 
 
 class SearchTextElement(BasePageElement):
@@ -8,7 +12,8 @@ class SearchTextElement(BasePageElement):
 
     # The locator for search box where search string is entered
     # locator = MainPageLocators.SEARCH_FIELD
-    locator = 'q'
+    def __init__(self, val='q'):
+        self.locator = val
 
 
 class BasePage(object):
@@ -53,8 +58,8 @@ class SearchResultsPage(BasePage):
             text = link.get_attribute('href')
             if text is not None:
                 if keyword.casefold() in link.text.casefold():
-                     # print("True")
-                     links.append(link)
+                    # print("True")
+                    links.append(link)
         return links
 
     def click_link(self, link_list, keyword, username=""):
@@ -63,3 +68,42 @@ class SearchResultsPage(BasePage):
                 link.click()
                 return
         return
+
+
+class RepositoryPage(MainPage):
+    search_text_element = SearchTextElement()
+
+    def select_tab(self, tab):
+        currentpage = self.driver.find_element_by_id('issues-tab')
+        if tab in currentpage.accessible_name:
+            currentpage.click()
+
+    def click_issue(self, state):
+
+        wait = WebDriverWait(self.driver, 10)
+        issuesList = []
+        issuesPage = wait.until(EC.visibility_of_element_located((By.ID, 'js-issues-search')))
+        issuesPage.clear()
+        issuesPage.send_keys("is:issue")
+        issuesPage.send_keys(Keys.RETURN)
+        issuesPage = wait.until(EC.visibility_of_element_located((By.ID, 'js-issues-search')))
+        # issues = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.js-navigation-container a[id^=issue_]')))
+        time.sleep(2)
+        # issues = self.driver.find_elements_by_css_selector('.js-navigation-container a[id^=issue_]')
+        issues = self.driver.find_elements(*IssuesPageLocators.ISSUES_LIST)
+        length = len(issues)
+        for i in range(length):
+            issues = self.driver.find_elements(*IssuesPageLocators.ISSUES_LIST)
+            issues[i].click()
+            status = wait.until(
+                EC.visibility_of_element_located((By.CSS_SELECTOR, '.gh-header-meta span[class^=State]')))
+            status = self.driver.find_element_by_css_selector('.gh-header-meta span[class^=State]')
+            if status.text in state:
+                issuesList.append(issues[i])
+                self.driver.execute_script("window.history.go(-1)")
+            else:
+                self.driver.execute_script("window.history.go(-1)")
+
+            # if state != self.driver.find_element_by_
+        # Span class="State State--open"
+        # input id="js-issues-search"
