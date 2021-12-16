@@ -1,3 +1,4 @@
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from element import BasePageElement
@@ -73,9 +74,14 @@ class SearchResultsPage(BasePage):
 class RepositoryPage(MainPage):
     search_text_element = SearchTextElement()
 
-    def select_tab(self, tab):
-        currentpage = self.driver.find_element_by_id('issues-tab')
-        if tab in currentpage.accessible_name:
+    def select_tab(self, tab, driver):
+        try:
+            load = WebDriverWait(driver, 2).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="issues-tab"]')))
+            print("Page is ready!")
+        except TimeoutException:
+            print("Page loading took too much time!")
+        currentpage = driver.find_element(By.XPATH, '//*[@id="issues-tab"]')
+        if tab in currentpage.text:
             currentpage.click()
 
     def click_issue(self, state):
