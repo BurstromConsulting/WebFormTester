@@ -17,7 +17,7 @@ class GitSearchTester(unittest.TestCase):
         keyword = "webform"
         username = "backdrop-contrib"
         # Checks if the word "Python" is in title
-        assert main_page.is_title_matches(), "Title doesn't match."
+        assert main_page.is_title_matches("Github"), "Title doesn't match."
         # Sets the text of search textbox to "pycon"
         main_page.search_text_element = keyword
         main_page.go_search()

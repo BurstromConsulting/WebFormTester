@@ -14,6 +14,6 @@ class SearchResultsPageLocators(object):
     NAV_MENU_FILTER_LIST = (By.XPATH, '//nav[@class=menu border d-none d-md-block]')
     SEARCH_RESULTS_LIST = (By.CSS_SELECTOR, 'div.codesearch-results')
 
-class IssuesPageLocators(object):
 
+class IssuesPageLocators(object):
     ISSUES_LIST = (By.CSS_SELECTOR, '.js-navigation-container a[id^=issue_]')

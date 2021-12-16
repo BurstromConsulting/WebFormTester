@@ -30,10 +30,10 @@ class MainPage(BasePage):
     # Declares a variable that will contain the retrieved text
     search_text_element = SearchTextElement()
 
-    def is_title_matches(self):
+    def is_title_matches(self, title):
         """Verifies that the hardcoded text "GitHub" appears in page title"""
 
-        return "GitHub" in self.driver.title
+        return title in self.driver.title
 
     def go_search(self):
         """Triggers the search"""
@@ -48,7 +48,7 @@ class SearchResultsPage(BasePage):
     def is_results_found(self):
         # Probably should search for this text in the specific page
         # element, but as for now it works fine
-        return "No results found." not in self.driver.page_source
+        return "We couldn’t find any repositories" not in self.driver.page_source
 
     def find_link(self, keyword):
         # Should search the div ending in "codesearch-results" for the link matching our criteria.
