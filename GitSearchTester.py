@@ -17,7 +17,7 @@ class GitSearchTester(unittest.TestCase):
         keyword = "webform"
         username = "backdrop-contrib"
         # Checks if the word "Python" is in title
-        assert main_page.is_title_matches(), "Title doesn't match."
+        assert main_page.is_title_matches("Github"), "Title doesn't match."
         # Sets the text of search textbox to "pycon"
         main_page.search_text_element = keyword
         main_page.go_search()
@@ -26,6 +26,11 @@ class GitSearchTester(unittest.TestCase):
         assert search_results_page.is_results_found(), "No results found."
         links = search_results_page.find_link(keyword)
         search_results_page.click_link(links, keyword)
+        self.driver.get("https://github.com/BurstromConsulting/WebFormTester")
+        repository_page = page.RepositoryPage(self.driver)
+        repository_page.select_tab("Issues")
+        repository_page.click_issue("Closed")
+
 
     def tearDown(self):
         self.driver.close()
