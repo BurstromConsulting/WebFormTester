@@ -10,9 +10,7 @@ import time
 
 class SearchTextElement(BasePageElement):
     """This class gets the search text from the specified locator"""
-
     # The locator for search box where search string is entered
-    # locator = MainPageLocators.SEARCH_FIELD
     def __init__(self, val='q'):
         self.locator = val
 
@@ -26,7 +24,7 @@ class BasePage(object):
 
 
 class MainPage(BasePage):
-    """Home page action methods come here. I.e. Python.org"""
+    """Home page action methods come here. I.e. GitHub.com"""
 
     # Declares a variable that will contain the retrieved text
     search_text_element = SearchTextElement()
@@ -52,18 +50,18 @@ class SearchResultsPage(BasePage):
         return "We couldn’t find any repositories" not in self.driver.page_source
 
     def find_link(self, keyword):
-        # Should search the div ending in "codesearch-results" for the link matching our criteria.
-        # element = self.driver.find_element(*SearchResultsPageLocators.SEARCH_RESULTS_LIST)
+        # Search the div ending in "codesearch-results" for the link matching our criteria.
         links = []
         for link in self.driver.find_elements_by_css_selector('.v-align-middle'):
             text = link.get_attribute('href')
             if text is not None:
                 if keyword.casefold() in link.text.casefold():
-                    # print("True")
                     links.append(link)
         return links
 
     def click_link(self, link_list, keyword, username=""):
+        # Clicks the first match according to our Keyword and Username that we've specified in our search.
+
         for link in link_list:
             if keyword in link.text.casefold() and username in link.text.casefold():
                 link.click()
@@ -75,9 +73,11 @@ class RepositoryPage(MainPage):
     search_text_element = SearchTextElement()
 
     def select_tab(self, tab, driver):
+        # Method meant for the purpose of selecting the various types of Tabs in a Repository, e.g Issues
+        # Currently only checks for the Issues tab.
         try:
             load = WebDriverWait(driver, 2).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="issues-tab"]')))
-            print("Page is ready!")
+            # print("Page is ready!")
         except TimeoutException:
             print("Page loading took too much time!")
         currentpage = driver.find_element(By.XPATH, '//*[@id="issues-tab"]')
@@ -93,9 +93,7 @@ class RepositoryPage(MainPage):
         issuesPage.send_keys("is:issue")
         issuesPage.send_keys(Keys.RETURN)
         issuesPage = wait.until(EC.visibility_of_element_located((By.ID, 'js-issues-search')))
-        # issues = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.js-navigation-container a[id^=issue_]')))
         time.sleep(2)
-        # issues = self.driver.find_elements_by_css_selector('.js-navigation-container a[id^=issue_]')
         issues = self.driver.find_elements(*IssuesPageLocators.ISSUES_LIST)
         length = len(issues)
         for i in range(length):
@@ -103,13 +101,9 @@ class RepositoryPage(MainPage):
             issues[i].click()
             status = wait.until(
                 EC.visibility_of_element_located((By.CSS_SELECTOR, '.gh-header-meta span[class^=State]')))
-            status = self.driver.find_element_by_css_selector('.gh-header-meta span[class^=State]')
+            status = self.driver.find_element(By.CSS_SELECTOR, '.gh-header-meta span[class^=State]')
             if status.text in state:
                 issuesList.append(issues[i])
                 self.driver.execute_script("window.history.go(-1)")
             else:
                 self.driver.execute_script("window.history.go(-1)")
-
-            # if state != self.driver.find_element_by_
-        # Span class="State State--open"
-        # input id="js-issues-search"
