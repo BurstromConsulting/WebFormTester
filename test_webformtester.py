@@ -14,30 +14,30 @@ import page
 class TestClassWebform(unittest.TestCase):
     websiteList = ["http://www.github.com"]
     repoList = ["https://github.com/BurstromConsulting/WebFormTester"]
-    web_drivers = {}
     websiteName = "GitHub"
-    delay = 2  # Seconds
     keyword = "webform"
     username = ""
-    searchList = {"keyword": keyword, "username": username}
     # Browser dictionary for future use of making it more dynamical in regards of how many browsers we're testing
     # In this case We're testing Chrome, Edge, Firefox but we're not using the dict for anything currently.
     browserList = {}
+    web_drivers = {}
+    searchList = {"keyword": keyword, "username": username}
+    delay = 2  # Seconds
 
     @pytest.mark.xdist_group(name="chrome")
-    def test_1chrome(self):
+    def test_chrome(self):
         self.init_browser("chrome")
         self.run_test(self.web_drivers["chrome"])
         self.web_drivers["chrome"].close()
 
     @pytest.mark.xdist_group(name="firefox")
-    def test_2firefox(self):
+    def test_firefox(self):
         self.init_browser("firefox")
         self.run_test(self.web_drivers["firefox"])
         self.web_drivers["firefox"].close()
 
     @pytest.mark.xdist_group(name="edge")
-    def test_3edge(self):
+    def test_edge(self):
         self.init_browser("edge")
         self.run_test(self.web_drivers["edge"])
         self.web_drivers["edge"].close()
@@ -114,8 +114,6 @@ class TestClassWebform(unittest.TestCase):
 
     def tearDown(self):
         print("Done")
-        # for driver in self.web_drivers:
-        #     self.web_drivers[driver].close()
 
 
 if __name__ == '__main__':
